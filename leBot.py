@@ -10,8 +10,6 @@ Basic Echobot example, repeats messages.
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
-
-from icecream import ic 
 import json
 import logging
 from telegram import Update, ForceReply
@@ -40,7 +38,6 @@ def add_command(update: Update, context: CallbackContext):
     Adds one or more item(s) to the current shopping list.
     """
     to_add = [item.strip() for item in (update.message.text[5:]).split(',')]
-    ic(to_add)
     global shopping_list ; shopping_list += to_add
 
 def rm_command(update: Update, context: CallbackContext):
@@ -55,11 +52,13 @@ def get_command(update: Update, context: CallbackContext) -> None:
     """
     Sends back the current shopping list.
     """
+    pretty_list = '- '
     global shopping_list
     if not shopping_list:
         update.message.reply_text("Nothing to see here.")
-    else:   
-        update.message.reply_text(shopping_list)
+    else: 
+        pretty_list += "\n- ".join(shopping_list)
+        update.message.reply_text(pretty_list)
 
 def clear_command(update: Update, context: CallbackContext) -> None:
     """
