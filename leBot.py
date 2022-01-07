@@ -29,6 +29,15 @@ def get_api_key():
         data = json.load(jsonfile)
     return data["api-key"]
 
+def sanitize_input(inputList):
+    to_rm = []
+    for i, elem in enumerate(inputList):
+        if elem[0] == '/':
+            to_rm.append(i)
+    for elem in to_rm:
+        del inputList[elem] 
+    return inputList
+
 def help_command(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /help is issued."""
     update.message.reply_text('/add ingrédient1, ingrédient2 - ajoute ingrédients 1 et 2 à la liste de courses.\n/rm ingrédient1 - supprime ingrédient1 de la liste de courses.\n /get - renvoie la lite de courses en l\'état.\n /clear - reset la liste de courses.')
@@ -38,6 +47,7 @@ def add_command(update: Update, context: CallbackContext):
     Adds one or more item(s) to the current shopping list.
     """
     to_add = [item.strip() for item in (update.message.text[5:]).split(',')]
+    to_add = sanitize_input(to_add)
     global shopping_list ; shopping_list += to_add
 
 def rm_command(update: Update, context: CallbackContext):
@@ -45,6 +55,7 @@ def rm_command(update: Update, context: CallbackContext):
     Deletes one or more item(s) from the current shopping list.
     """
     to_rm = [item.strip() for item in (update.message.text[4:]).split(',')]
+    to_rm = sanitize_input(to_rm)
     global shopping_list ; shopping_list = [shopping_list.remove(item) for item in to_rm]
     
 
